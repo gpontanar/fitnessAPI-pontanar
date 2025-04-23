@@ -44,3 +44,22 @@ module.exports.deleteWorkout = (req, res) => {
         })
         .catch(err => res.status(500).json({ error: err.message }));
 };
+
+// Marks if your workout as completed
+module.exports.completeWorkoutStatus = (req, res) => {
+    Workout.findOneAndUpdate(
+        { _id: req.params.id, userId: req.user.id },
+        { status: 'completed' },
+        { new: true }
+    )
+        .then(updatedWorkout => {
+            if (!updatedWorkout) {
+                return res.status(404).json({ message: 'Workout not found' });
+            }
+            res.status(200).json({
+                message: 'Workout status updated successfully',
+                updatedWorkout
+            });
+        })
+        .catch(err => res.status(500).json({ error: err.message }));
+};
