@@ -19,42 +19,23 @@ module.exports.createAccessToken = (user) => {
 
 // [SECTION] Token Verification
 module.exports.verify = (req, res, next) => {
-	console.log(req.headers.authorization);
+    let token = req.headers.authorization;
 
-	let token = req.headers.authorization;
+    if (!token) {
+        return res.status(403).send({ auth: "Failed", message: "Action Forbidden" });
+    }
 
-	if(typeof token === "undefined"){
-		return res.status(403).send({ auth: "Failed.", message: "Action Forbidden" })
-	}else{
-		console.log(token);
-		token = token.slice(7, token.length);
-		console.log(token);
+    token = token.slice(7, token.length); // Remove "Bearer " prefix
 
-		// [SECTION] Token Decryption
-	
-		jwt.verify(token, process.env.JWT_SECRET_KEY, function(err, decodedToken){
-			if(err){
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
+        if (err) {
+            return res.status(403).send({ auth: "Failed", message: "Invalid Token" });
+        }
 
-				return res.status(403).send({
-					auth: "Failed",
-					// message: err.message
-					message: "Action Forbidden"
-				});
-			
-			}else{
-
-				console.log("result from verify method:")
-				console.log(decodedToken);
-
-				// req.user = decodedToken.id;
-				req.user = decodedToken;
-
-				next();
-			}
-		})
-	}
-}
-
+        req.user = decodedToken; // Attach decoded token to request
+        next();
+    });
+};
 // [SECTION] Verify Admin
 module.exports.verifyAdmin = (req, res, next) => {
 

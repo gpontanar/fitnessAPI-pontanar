@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 //Routes Middleware
 const workoutRoutes = require("./routes/workout");
@@ -11,8 +12,23 @@ require('dotenv').config();
 
 const app = express();
 
+// Enable CORS for specific origin
+app.use(cors({
+    origin: 'http://localhost:3000',
+}));
+
+// const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+// app.use(cors({
+//     origin: allowedOrigins,
+// }));
+
+
 // Connecting to MongoDB Atlas
-mongoose.connect(process.env.MONGODB_STRING);
+mongoose.connect(process.env.MONGODB_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 // If the connection is successful, output in the console
 mongoose.connection.once("open", () => console.log("We're connected to the cloud database"));
