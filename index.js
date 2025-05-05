@@ -13,15 +13,15 @@ require('dotenv').config();
 const app = express();
 
 // Enable CORS for specific origin
-app.use(cors({
-    origin: 'http://localhost:3000',
-}));
-
-// const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
-
 // app.use(cors({
-//     origin: allowedOrigins,
+//     origin: 'http://localhost:3000',
 // }));
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+app.use(cors({
+    origin: allowedOrigins,
+}));
 
 
 // Connecting to MongoDB Atlas
